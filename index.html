@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>NPC Randomizador</title>
+  <style>
+    body { background-color: #121212; color: white; font-family: sans-serif; text-align: center; padding: 30px; }
+    button { padding: 15px 30px; font-size: 18px; background: #333; color: white; border: none; cursor: pointer; }
+    .resultado { margin-top: 20px; white-space: pre-line; font-size: 16px; }
+  </style>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#121212">
+<link rel="icon" href="icons/icon-192.png">
+</head>
+<body>
+  <h1>NPC Randomizador</h1>
+  <button onclick="gerarNPC()">Randomizar</button>
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    function gerarNPC() {
+      const d20 = () => Math.floor(Math.random() * 20) + 1;
+
+      const dados = [
+        d20(),d20(),d20(),d20(),
+      ]
+
+      const multiclass = (dados[0]  >= 19) ? "Sim" : "Não";
+      const prodigio   = (dados[1] === 20) ? "Sim" : "Não";
+      const hibrido    = (dados[2]  >= 18) ? "Sim" : "Não";
+      const classe     = dados[3];
+
+
+      switch (true) {
+        case classe === 1: classeSocial = "Escravo";   break
+        case classe <= 15: classeSocial = "Camponês";  break
+        case classe <= 19: classeSocial = "Burguesia"; break
+        case classe == 20: classeSocial = "Elite";     break
+      }
+
+      
+
+      const resultado = `
+Multiclasse: ${multiclass} (${dados[0]})
+Prodígio: ${prodigio} (${dados[1]})
+Híbrido: ${hibrido} (${dados[2]})
+Classe Social: ${classeSocial} (${classe})
+`;
+
+      document.getElementById("resultado").innerText = resultado;
+    }
+  </script>
+
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js')
+      .then(() => console.log('Service Worker registrado!'));
+  }
+</script>
+</body>
+</html>
