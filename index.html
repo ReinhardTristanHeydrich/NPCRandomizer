@@ -48,7 +48,7 @@
   const dRaça   = () => Raças[Math.floor(Math.random() * Raças.length)];
   const dClasse = () => Classes[Math.floor(Math.random() * Classes.length)];
 
-    
+
 
  function gerarNPC() {
 
@@ -78,7 +78,7 @@
   // Classes
   let nClasses = 1;
   if (multiclass === "Sim") {
-    nClasses = dMulti === 20 ? 3 : 2;
+    nClasses = 2;
   }
   const classes = [];
   while (classes.length < nClasses) {
