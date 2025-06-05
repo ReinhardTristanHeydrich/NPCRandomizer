@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>NPC Randomizador</title>
+  <title>NPC Randomizer</title>
   <style>
     body {
       background-color: #121212;
@@ -22,12 +22,20 @@
       cursor: pointer;
     }
 
-    .resultado {
-      margin-top: 20px;
-      white-space: pre-line;
+    .result {
+      margin: 20px auto;
+      white-space: pre;
       font-size: 16px;
+      text-align: left;
+      max-width: 500px;
+      font-family: monospace;
     }
+
+    .green { color: #88ff88; }
+    .red { color: #ff8888; }
+    .value { display: inline-block; min-width: 80px; }
   </style>
+
 
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#121212">
@@ -35,70 +43,98 @@
 </head>
 
 <body>
-  <h1>NPC Randomizador</h1>
-  <button onclick="gerarNPC()">Randomizar</button>
-  <div class="resultado" id="resultado"></div>
+  <h1>NPC Randomizer</h1>
+  <button onclick="generateNPC()">Randomize</button>
+  <div class="result" id="result"></div>
 
-  <!-- param -->
+  <!-- parameters -->
   <script src="param/classes.js"></script>
   <script src="param/raças.js"></script>
 
   <script>
-  const d20     = () => Math.floor(Math.random() * 20) + 1;
-  const dRaça   = () => Raças[Math.floor(Math.random() * Raças.length)];
-  const dClasse = () => Classes[Math.floor(Math.random() * Classes.length)];
+    const rollD20    = () => Math.floor(Math.random() * 20) + 1;
+    const getRace    = () => Races[Math.floor(Math.random() * Races.length)];
+    const getClass   = () => Classes[Math.floor(Math.random() * Classes.length)];
 
-    
+    function pickSocialClass(roll) {
+      if (roll === 1) return "Escravo";
+      if (roll <= 15) return "Camponês";
+      if (roll <= 19) return "Burguesia";
+      return "Elite";
+    }
 
- function gerarNPC() {
+    function pickRaces(isHybrid) {
+      const races = [getRace()];
+      if (isHybrid) {
+        let newRace;
+        do {
+          newRace = getRace();
+        } while (races.includes(newRace));
+        races.push(newRace);
+      }
+      return races;
+    }
 
-  const [dMulti, dProdi, dHibrido, dSocial] = [d20(), d20(), d20(), d20()];
-  const multiclass = dMulti   >= 19 ? "Sim" : "Não";
-  const prodigio   = dProdi  === 20 ? "Sim" : "Não";
-  const hibrido    = dHibrido >= 18 ? "Sim" : "Não";
+    function pickClasses(isMulticlass) {
+      const numClasses = isMulticlass ? 2 : 1;
+      const chosen = [];
+      while (chosen.length < numClasses) {
+        const newClass = getClass();
+        if (!chosen.includes(newClass)) chosen.push(newClass);
+      }
+      return chosen;
+    }
 
+    function padLabel(label, width = 14) {
+      return label + ":" + " ".repeat(Math.max(0, width - label.length - 1));
+    }
 
-  let classeSocial = "";
-  switch (true) {
-    case dSocial === 1: classeSocial = "Escravo"; break;
-    case dSocial <= 15: classeSocial = "Camponês"; break;
-    case dSocial <= 19: classeSocial = "Burguesia"; break;
-    case dSocial === 20: classeSocial = "Elite"; break;
-  }
+    function padValue(value, roll) {
+      const rollColor = getRollColor(roll);
+      const valueColor = value === "Sim" || value === "Não" ? getYesNoColor(value) : "white";
+      return `<span class="value" style="color:${valueColor}">${value}</span> <span style="color:${rollColor}">(${roll})</span>`;
+    }
 
-  let racas = [dRaça()];
-  if (hibrido === "Sim") {
-    let novaRaça;
-    do {
-      novaRaça = dRaça();
-    } while (racas.includes(novaRaça));
-    racas.push(novaRaça);
-  }
+    function getYesNoColor(value) {
+      return value === "Sim" ? "#88ff88" : "#ff8888";
+    }
 
-  // Classes
-  let nClasses = 1;
-  if (multiclass === "Sim") {
-    nClasses = dMulti === 20 ? 3 : 2;
-  }
-  const classes = [];
-  while (classes.length < nClasses) {
-    let novaClasse = dClasse();
-    if (!classes.includes(novaClasse)) classes.push(novaClasse);
-  }
+    function getRollColor(roll) {
+      const green = Math.floor(255 * roll / 20);
+      const red = 255 - green;
+      return `rgb(${red}, ${green}, ${green / 2})`;
+    }
 
-  const resultado = `
-Multiclasse: ${multiclass} (${dMulti})
-Prodígio: ${prodigio} (${dProdi})
-Híbrido: ${hibrido} (${dHibrido})
-Classe Social: ${classeSocial} (${dSocial})
+    function formatItem(item) {
+      if (typeof item === "string") {
+        return `<span style="color:white">${item}</span>`;
+      }
+      return `<span style="color:${item.color || 'white'}">${item.name}</span>`;
+    }
 
-Raça${racas.length > 1 ? "s" : ""}: ${racas.join(" / ")}
-Classe${classes.length > 1 ? "s" : ""}: ${classes.join(" / ")}
+    function generateNPC() {
+      const [rollMulti, rollProdigy, rollHybrid, rollSocial] = [rollD20(), rollD20(), rollD20(), rollD20()];
+
+      const isMulticlass = rollMulti >= 19;
+      const isProdigy    = rollProdigy === 20;
+      const isHybrid     = rollHybrid >= 18;
+
+      const socialClass = pickSocialClass(rollSocial);
+      const races       = pickRaces(isHybrid);
+      const classes     = pickClasses(isMulticlass);
+
+      const result = `
+${padLabel("Multiclasse", 1)}   ${padValue(isMulticlass ? "Sim" : "Não", rollMulti)}
+${padLabel("Prodígio", 1)}      ${padValue(isProdigy ? "Sim" : "Não", rollProdigy)}
+${padLabel("Híbrido", 1)}       ${padValue(isHybrid ? "Sim" : "Não", rollHybrid)}
+${padLabel("Classe Social", 1)} ${padValue(socialClass, rollSocial)}
+
+${padLabel("Raça" + (races.length > 1 ? "s" : ""))}${races.map(formatItem).join(" / ")}
+${padLabel("Classe" + (classes.length > 1 ? "s" : ""))}${classes.map(formatItem).join(" / ")}
 `;
 
-  document.getElementById("resultado").innerText = resultado;
-}
-
+      document.getElementById("result").innerHTML = result;
+    }
   </script>
 </body>
 
