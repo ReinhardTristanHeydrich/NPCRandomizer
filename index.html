@@ -75,15 +75,15 @@
       return races;
     }
 
-    function pickClasses(isMulticlass) {
-      const numClasses = isMulticlass ? 2 : 1;
-      const chosen = [];
-      while (chosen.length < numClasses) {
-        const newClass = getClass();
-        if (!chosen.includes(newClass)) chosen.push(newClass);
-      }
-      return chosen;
-    }
+  function pickClasses(rollMulti) {
+  const numClasses = rollMulti == 20 ? 3 : rollMulti >= 18 ? 2 : 1;
+  const chosen = [];
+  while (chosen.length < numClasses) {
+    const newClass = getClass();
+    if (!chosen.includes(newClass)) chosen.push(newClass);
+  }
+  return chosen;
+}
 
     function padLabel(label, width = 14) {
       return label + ":" + " ".repeat(Math.max(0, width - label.length - 1));
@@ -115,13 +115,13 @@
     function generateNPC() {
       const [rollMulti, rollProdigy, rollHybrid, rollSocial] = [rollD20(), rollD20(), rollD20(), rollD20()];
 
-      const isMulticlass = rollMulti >= 19;
+      const isMulticlass = rollMulti    >= 19;
       const isProdigy    = rollProdigy === 20;
-      const isHybrid     = rollHybrid >= 18;
+      const isHybrid     = rollHybrid   >= 18;
 
       const socialClass = pickSocialClass(rollSocial);
       const races       = pickRaces(isHybrid);
-      const classes     = pickClasses(isMulticlass);
+      const classes     = pickClasses(rollMulti);
 
       const result = `
 ${padLabel("Multiclasse", 1)}   ${padValue(isMulticlass ? "Sim" : "Não", rollMulti)}
