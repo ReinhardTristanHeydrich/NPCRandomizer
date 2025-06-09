@@ -6,12 +6,28 @@ class Classe {
     this.WeaponCount = WeaponCount;
   }
   
-  getWeaponsForClass() {
-    let ChosenWeapon = this.weapons[Math.floor(Math.random() * this.weapons.length)]
-    if (ChosenWeapon instanceof WeaponCollection)
-      ChosenWeapon = ChosenWeapon[Math.floor(Math.random() * ChosenWeapon)]
-   return ChosenWeapon
+getWeaponsForClass() {
+  if (!this.weapons || this.weapons.length === 0) {
+    return new Weapon("Nenhuma", "#ffffff", "Sem tamanho");
   }
+
+  const randomWeapon = this.weapons[Math.floor(Math.random() * this.weapons.length)];
+  
+  if (!randomWeapon) {
+    return new Weapon("Nenhuma", "#ffffff", "Sem tamanho");
+  }
+
+  // Se for uma WeaponCollection, seleciona uma arma aleatória dela
+  if (randomWeapon instanceof WeaponCollection) {
+    const weaponVariants = Object.values(randomWeapon[randomWeapon.name]);
+    if (weaponVariants.length > 0) {
+      return weaponVariants[Math.floor(Math.random() * weaponVariants.length)];
+    }
+    return new Weapon("Nenhuma", "#ffffff", "Sem tamanho");
+  }
+
+  return randomWeapon;
+}
 
 
 }

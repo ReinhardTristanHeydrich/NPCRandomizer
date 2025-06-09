@@ -30,13 +30,19 @@
       return chosen;
     }
     function getWeaponsForClasses(cls) {
-      let WeaponCount = 1
-      if (cls.name == "Guerreiro Arcano") WeaponCount++
+      const weapons = [];
+      const weaponCount = cls.name === "Guerreiro Arcano" ? 2 : 1;
 
-      if (WeaponCount == 2) return [cls.getWeaponsForClass()]
-      return [cls.getWeaponsForClass()]
+      for (let i = 0; i < weaponCount; i++) {
+        const weapon = cls.getWeaponsForClass();
+        if (weapon) {
+          weapons.push(weapon);
+        } else {
+          weapons.push(new Weapon("Nenhuma", "#ffffff", "Sem tamanho"));
+        }
+      }
 
-
+      return weapons;
     }
 
 
@@ -69,7 +75,7 @@
     function generateNPC() {
 
       const rolls = []
-      rolls["Multiclass"] = 20
+      rolls["Multiclass"] = rollD20()
       rolls["Prodigy"]    = rollD20()
       rolls["Hybrid"]     = rollD20()
       rolls["Social"]     = rollD20()
@@ -83,9 +89,15 @@
       const classes     = pickClasses(rolls["Multiclass"]);
 
       const weaponLines = classes.map(cls => {
-        const className = cls.name
+        const className = cls.name;
         const weapons = getWeaponsForClasses(cls);
-        const weaponText = weapons.map(w => w.size === "Sem tamanho" ? w.name : `${w.name} (${w.size})`).join(" / ");
+        
+        const weaponText = weapons.map(w => {
+          if (!w || !w.name) return "Nenhuma";
+          return (w.size === "Sem tamanho" || typeof w.size === "undefined") ? 
+            w.name : `${w.name} (${w.size})`;
+        }).join(" / ");
+        
         return `${padLabel(`Arma${weapons.length > 1 ? 's' : ''} (${className})`)}${weaponText}`;
       }).join("\n");
 
@@ -103,8 +115,4 @@ ${weaponLines}
 `;
 
 document.getElementById("result").innerHTML = result;
-
-console.log(`
-  
-  `)
     }
