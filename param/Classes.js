@@ -1,28 +1,170 @@
+class Classe {
+  constructor(name, color, weapons = [], WeaponCount = 1) {
+    this.name = name;
+    this.color = color;
+    this.weapons = weapons;
+    this.WeaponCount = WeaponCount;
+  }
+  
+  getWeaponsForClass() {
+    let ChosenWeapon = this.weapons[Math.floor(Math.random() * this.weapons.length)]
+    if (ChosenWeapon instanceof WeaponCollection)
+      ChosenWeapon = ChosenWeapon[Math.floor(Math.random() * ChosenWeapon)]
+   return ChosenWeapon
+  }
+
+
+}
+
 const Classes = [
-  { name: "Esadachim", color: "#d08770" },
-  { name: "Bardo", color: "#b48ead" },
-  { name: "Juggernaut", color: "#a3be8c" },
-  { name: "Paladino", color: "#ebcb8b" },
-  { name: "Assassino", color: "#bf616a" },
-  { name: "Clerigo", color: "#eceff4" },
-  { name: "Tanke", color: "#d08770" },
-  { name: "Mago", color: "#5e81ac" },
-  { name: "Anti-mago", color: "#8fbcbb" },
-  { name: "Domador", color: "#a3be8c" },
-  { name: "Pistoleiro", color: "#d08770" },
-  { name: "Lutador", color: "#ebcb8b" },
-  { name: "Arqueiro", color: "#a3be8c" },
-  { name: "Invocador", color: "#b48ead" },
-  { name: "Sniper", color: "#5e81ac" },
-  { name: "Executor", color: "#d74f4f" },
-  { name: "Ninja", color: "#4c566a" },
-  { name: "Caçador", color: "#a3be8c" },
-  { name: "Lanceiro", color: "#88c0d0" },
-  { name: "Ladino", color: "#ab7967" },
-  { name: "Feiticeiro", color: "#b48ead" },
-  { name: "Artifice", color: "#a1cfff" },
-  { name: "Cavaleiro", color: "#eceff4" },
-  { name: "Magico", color: "#81a1c1" },
-  { name: "Ceifador", color: "#bf616a" },
-  { name: "Guerreiro arcano", color: "#8fbcbb" }
+  new Classe("Espadachim", "#d08770", getWeapons([["Espada", "Médio"]])),
+  
+  new Classe("Juggernaut", "#a3be8c", getWeapons([
+    ["Espada", "Grande"],
+    ["Martelo de guerra", "Grande"],
+    ["Machado", "Grande"],
+    ["Calibre 12"],
+    ["Maça", "Grande"],
+    ["Clava", "Grande"]
+  ])),
+  
+  new Classe("Assassino", "#bf616a", getWeapons([
+    ["Adaga", "Pequeno"],
+    ["Kunai", "Pequeno"],
+    ["Pistola"],
+    ["Espada", "Pequeno"]
+  ])),
+  
+  new Classe("Tanke", "#d08770", getWeapons([
+    ["Espada", ["Médio", "Grande"]],
+    ["Lança", ["Médio", "Grande"]],
+    ["Machado", ["Médio", "Grande"]],
+    ["Pistola"],
+    ["Besta", ["Médio", "Grande"]],
+    ["Maça", ["Médio", "Grande"]],
+    ["Clava", ["Médio", "Grande"]]
+  ])),
+  
+  new Classe("Bardo", "#b48ead", /*getWeapons([])*/), // Bardo não tem armas específicas
+  
+  new Classe("Paladino", "#ebcb8b", getWeapons([
+    ["Espada", "Médio"],
+    ["Lança", "Médio"],
+    ["Machado", "Médio"]
+  ])),
+  
+  new Classe("Clerigo", "#eceff4", getWeapons([
+    ["Maça", "Médio"],
+    ["Clava", "Médio"],
+    ["Machado", "Médio"]
+  ])),
+  
+  new Classe("Mago", "#5e81ac", getWeapons([
+    ["Cajado"],
+    ["Orbe"],
+    ["Grimório"]
+  ])),
+  
+  new Classe("Anti-mago", "#8fbcbb", getWeapons([
+    ["Cajado"],
+    ["Orbe"],
+    ["Grimório"]
+  ])),
+  
+  new Classe("Pistoleiro", "#d08770", getWeapons([
+    ["Pistola"]
+  ])),
+  
+  new Classe("Arqueiro", "#a3be8c", getWeapons([
+    ["Arco", ["Médio", "Grande"]],
+    ["Besta", ["Médio", "Pequeno"]]
+  ])),
+  
+  new Classe("Sniper", "#5e81ac", getWeapons([
+    ["Sniper"]
+  ])),
+  
+  new Classe("Domador", "#a3be8c", getWeapons([])),
+  
+  new Classe("Lutador", "#ebcb8b", getWeapons([
+    ["Luvas/botas de batalha"]
+  ])),
+  
+  new Classe("Invocador", "#b48ead", getWeapons([])),
+  
+  new Classe("Executor", "#d74f4f", getWeapons([
+    ["Machado", "Médio"],
+    ["Foice", "Médio"]
+  ])),
+  
+  new Classe("Ninja", "#4c566a", getWeapons([
+    ["Adaga", "Pequeno"],
+    ["Espada", "Pequeno"],
+    ["Xuriquem", "Pequeno"],
+    ["Kunai", "Pequeno"],
+    ["Besta", "Pequeno"]
+  ])),
+  
+  new Classe("Lanceiro", "#88c0d0", getWeapons([
+    ["Lança", "Médio"],
+    ["Tridente", "Médio"]
+  ])),
+  
+  new Classe("Feiticeiro", "#b48ead", getWeapons([
+    ["Cajado"],
+    ["Orbe"],
+    ["Grimório"]
+  ])),
+  
+  new Classe("Caçador", "#a3be8c", getWeapons([
+    ["Calibre 12"],
+    ["Sniper"],
+    ["Besta", "Médio"],
+    ["Adaga", "Médio"]
+  ])),
+  
+  new Classe("Ladino", "#ab7967", getWeapons([
+    ["Espada", "Pequeno"],
+    ["Adaga", "Pequeno"]
+  ])),
+  
+  new Classe("Artifice", "#a1cfff", getWeapons([])),
+  
+  new Classe("Cavaleiro", "#eceff4", getWeapons([
+    ["Espada", ["Médio", "Grande"]],
+    ["Machado", ["Médio", "Grande"]],
+    ["Martelo de Guerra", ["Médio", "Grande"]],
+    ["Maça", ["Médio", "Grande"]],
+    ["Clava", ["Médio", "Grande"]],
+    ["Foice", ["Médio", "Grande"]],
+    ["Calibre 12"],
+    ["Pistola"],
+    ["Sniper"],
+    ["Arco", ["Médio", "Grande"]],
+    ["Besta", ["Médio", "Pequeno"]],
+    ["Lança", ["Médio", "Grande"]],
+    ["Spiked chain", ["Médio", "Grande"]]
+  ])),
+  
+  new Classe("Necromante", "#81a1c1", getWeapons([
+    ["Cajado", "Médio"],
+    ["Foice", "Médio"]
+  ])),
+  
+  new Classe("Magico", "#81a1c1", getWeapons([])),
+  
+  new Classe("Ceifador", "#bf616a", getWeapons([
+    ["Foice", "Médio"]
+  ])),
+  
+  new Classe("Guerreiro Arcano", "#8fbcbb", getWeapons([
+    ["Espada", "Médio"],
+    ["Lança", "Médio"],
+    ["Foice", "Médio"],
+    ["Machado", "Médio"],
+    ["Adaga"],
+    ["Kunai"],
+    ["Besta", "Médio"],
+    ["Pistola"]
+  ]))
 ];

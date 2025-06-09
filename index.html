@@ -31,9 +31,18 @@
       font-family: monospace;
     }
 
-    .green { color: #88ff88; }
-    .red { color: #ff8888; }
-    .value { display: inline-block; min-width: 80px; }
+    .green {
+      color: #88ff88;
+    }
+
+    .red {
+      color: #ff8888;
+    }
+
+    .value {
+      display: inline-block;
+      min-width: 80px;
+    }
   </style>
 
 
@@ -47,95 +56,12 @@
   <button onclick="generateNPC()">Randomize</button>
   <div class="result" id="result"></div>
 
-  <!-- parameters -->
+  <!-- Parameters -->
+  <script src="param/Weapons.js"></script>
   <script src="param/Classes.js"></script>
   <script src="param/Races.js"></script>
-
-  <script>
-    const rollD20    = () => Math.floor(Math.random() * 20) + 1;
-    const getRace    = () => Races[Math.floor(Math.random() * Races.length)];
-    const getClass   = () => Classes[Math.floor(Math.random() * Classes.length)];
-
-    function pickSocialClass(roll) {
-      if (roll === 1) return "Escravo";
-      if (roll <= 15) return "Camponês";
-      if (roll <= 19) return "Burguesia";
-      return "Elite";
-    }
-
-    function pickRaces(isHybrid) {
-      const races = [getRace()];
-      if (isHybrid) {
-        let newRace;
-        do {
-          newRace = getRace();
-        } while (races.includes(newRace));
-        races.push(newRace);
-      }
-      return races;
-    }
-
-  function pickClasses(rollMulti) {
-  const numClasses = rollMulti == 20 ? 3 : rollMulti >= 18 ? 2 : 1;
-  const chosen = [];
-  while (chosen.length < numClasses) {
-    const newClass = getClass();
-    if (!chosen.includes(newClass)) chosen.push(newClass);
-  }
-  return chosen;
-}
-
-    function padLabel(label, width = 14) {
-      return label + ":" + " ".repeat(Math.max(0, width - label.length - 1));
-    }
-
-    function padValue(value, roll) {
-      const rollColor = getRollColor(roll);
-      const valueColor = value === "Sim" || value === "Não" ? getYesNoColor(value) : "white";
-      return `<span class="value" style="color:${valueColor}">${value}</span> <span style="color:${rollColor}">(${roll})</span>`;
-    }
-
-    function getYesNoColor(value) {
-      return value === "Sim" ? "#88ff88" : "#ff8888";
-    }
-
-    function getRollColor(roll) {
-      const green = Math.floor(255 * roll / 20);
-      const red = 255 - green;
-      return `rgb(${red}, ${green}, ${green / 2})`;
-    }
-
-    function formatItem(item) {
-      if (typeof item === "string") {
-        return `<span style="color:white">${item}</span>`;
-      }
-      return `<span style="color:${item.color || 'white'}">${item.name}</span>`;
-    }
-
-    function generateNPC() {
-      const [rollMulti, rollProdigy, rollHybrid, rollSocial] = [rollD20(), rollD20(), rollD20(), rollD20()];
-
-      const isMulticlass = rollMulti    >= 19;
-      const isProdigy    = rollProdigy === 20;
-      const isHybrid     = rollHybrid   >= 18;
-
-      const socialClass = pickSocialClass(rollSocial);
-      const races       = pickRaces(isHybrid);
-      const classes     = pickClasses(rollMulti);
-
-      const result = `
-${padLabel("Multiclasse", 1)}   ${padValue(isMulticlass ? "Sim" : "Não", rollMulti)}
-${padLabel("Prodígio", 1)}      ${padValue(isProdigy ? "Sim" : "Não", rollProdigy)}
-${padLabel("Híbrido", 1)}       ${padValue(isHybrid ? "Sim" : "Não", rollHybrid)}
-${padLabel("Classe Social", 1)} ${padValue(socialClass, rollSocial)}
-
-${padLabel("Raça" + (races.length > 1 ? "s" : ""))}${races.map(formatItem).join(" / ")}
-${padLabel("Classe" + (classes.length > 1 ? "s" : ""))}${classes.map(formatItem).join(" / ")}
-`;
-
-      document.getElementById("result").innerHTML = result;
-    }
-  </script>
+  <!-- Execution -->
+  <script src="main.js"></script>
 </body>
 
 </html>

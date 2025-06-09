@@ -1,0 +1,110 @@
+    // Random
+    const rollD20 = () => Math.floor(Math.random() * 20) + 1;
+    const getRace = () => Races[Math.floor(Math.random() * Races.length)];
+    const getClass = () => Classes[Math.floor(Math.random() * Classes.length)];
+
+    // Atributes
+    function pickSocialClass(roll) {
+      if (roll === 1) return "Escravo";
+      if (roll <= 15) return "Camponês";
+      if (roll <= 19) return "Burguesia";
+      return "Elite";
+    }
+    function pickRaces(isHybrid) {
+      const races = [getRace()];
+      if (isHybrid) {
+        let newRace;
+        do { newRace = getRace(); }
+        while (races.includes(newRace));
+        races.push(newRace);
+      }
+      return races;
+    }
+    function pickClasses(rollMulti) {
+      const numClasses = rollMulti === 20 ? 3 : rollMulti >= 18 ? 2 : 1;
+      const chosen = [];
+      while (chosen.length < numClasses) {
+        const newClass = getClass();
+        if (!chosen.includes(newClass)) {chosen.push(newClass);}
+      }
+      return chosen;
+    }
+    function getWeaponsForClasses(cls) {
+      let WeaponCount = 1
+      if (cls.name == "Guerreiro Arcano") WeaponCount++
+
+      if (WeaponCount == 2) return [cls.getWeaponsForClass()]
+      return [cls.getWeaponsForClass()]
+
+
+    }
+
+
+    // Style
+    function padLabel(label, width = 14) {
+      return label + ":" + " ".repeat(Math.max(0, width - label.length - 1));
+    }
+    function padValue(value, roll) {
+      const rollColor = getRollColor(roll);
+      const valueColor = value === "Sim" || value === "Não" ? getYesNoColor(value) : "white";
+      return `<span class="value" style="color:${valueColor}">${value}</span> <span style="color:${rollColor}">(${roll})</span>`;
+    }
+    function getYesNoColor(value) {
+      return value === "Sim" ? "#88ff88" : "#ff8888";
+    }
+    function getRollColor(roll) {
+      const green = Math.floor((255 * roll) / 20);
+      const red = 255 - green;
+      return `rgb(${red}, ${green}, ${green / 2})`;
+    }
+    function formatItem(item) {
+      return `<span style="color:${item.color || 'white'}">${item.name || item}</span>`;
+    }
+
+
+    
+    // Execution
+
+
+    function generateNPC() {
+
+      const rolls = []
+      rolls["Multiclass"] = 20
+      rolls["Prodigy"]    = rollD20()
+      rolls["Hybrid"]     = rollD20()
+      rolls["Social"]     = rollD20()
+
+      const isMulticlass = rolls["Multiclass"] >= 19;
+      const isProdigy    = rolls["Prodigy"]   === 20;
+      const isHybrid     = rolls["Hybrid"]     >= 18;
+
+      const socialClass = pickSocialClass(rolls["Social"]);
+      const races       = pickRaces(rolls["Hybrid"]);
+      const classes     = pickClasses(rolls["Multiclass"]);
+
+      const weaponLines = classes.map(cls => {
+        const className = cls.name
+        const weapons = getWeaponsForClasses(cls);
+        const weaponText = weapons.map(w => w.size === "Sem tamanho" ? w.name : `${w.name} (${w.size})`).join(" / ");
+        return `${padLabel(`Arma${weapons.length > 1 ? 's' : ''} (${className})`)}${weaponText}`;
+      }).join("\n");
+
+
+      const result = `
+${padLabel("Multiclasse",   15)}${padValue(isMulticlass ? "Sim" : "Não", rolls["Multiclass"] )}
+${padLabel("Prodígio",      15)}${padValue(isProdigy    ? "Sim" : "Não", rolls["Prodigy"]    )}
+${padLabel("Híbrido",       15)}${padValue(isHybrid     ? "Sim" : "Não", rolls["Hybrid"]     )}
+${padLabel("Classe Social", 0)} ${padValue(socialClass,                  rolls["Social"]     )}
+
+${padLabel("Raça" + (races.length > 1 ? "s" : "")       )}${races.map(formatItem).join(" / ")}
+${padLabel("Classe" + (classes.length > 1 ? "s" : "")   )}${classes.map(formatItem).join(" / ")}
+
+${weaponLines}
+`;
+
+document.getElementById("result").innerHTML = result;
+
+console.log(`
+  
+  `)
+    }
