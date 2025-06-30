@@ -11,13 +11,20 @@
       return "Elite";
     }
     function pickRaces(isHybrid) {
-      const races = [getRace()];
-      if (isHybrid) {
-        let newRace;
-        do { newRace = getRace(); }
-        while (races.includes(newRace));
-        races.push(newRace);
+      const races = [];
+      const hasCorrupted = () => races.some(r => r.name === "Corrompidos");
+      const hasRace = (Race) => races.some(r => r.name === Race.name);
+      
+      let targetCount = 1 + (isHybrid ? 1 : 0) + (hasCorrupted() ? 1 : 0);
+      
+      while (races.length < targetCount) {
+        const newRace = getRace();
+        if (!hasRace(newRace)) {
+          races.push(newRace);
+          if (newRace.name === "Corrompidos") targetCount++;
+        }
       }
+      
       return races;
     }
     function pickClasses(rollMulti) {

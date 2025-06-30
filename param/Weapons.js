@@ -25,7 +25,7 @@
     ? new WeaponCollection(...args, size)
     : new Weapon(...args, size);
 };
-function getWeapons(list) {
+  function getWeapons(list) {
   return list.map(([name, altOrAlts]) => {
     const weapon = Weapons[name];
     if (!weapon) throw new Error(`Arma não encontrada: ${name}`);

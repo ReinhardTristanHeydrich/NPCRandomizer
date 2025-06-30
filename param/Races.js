@@ -1,25 +1,33 @@
+class Race {
+  constructor(name, color) {
+    this.name  = name
+    this.color = color
+  }
+}
+
 const Races = [
-  { name: "Humano", color: "#ffffff" },
-  { name: "Super humano", color: "#a3be8c" },
-  { name: "Anão", color: "#d08770" },
-  { name: "Demi-humano", color: "#b48ead" },
-  { name: "Elfo", color: "#88c0d0" },
-  { name: "Druida", color: "#8fbcbb" },
-  { name: "Animal", color: "#ebcb8b" },
-  { name: "Cborg", color: "#5e81ac" },
-  { name: "Anjo", color: "#eceff4" },
-  { name: "Anjo caido", color: "#bf616a" },
-  { name: "Demonio", color: "#bf616a" },
-  { name: "Vampiro", color: "#b48ead" },
-  { name: "Goul", color: "#a3be8c" },
-  { name: "Gigante", color: "#d08770" },
-  { name: "Golem", color: "#7c6f64" },
-  { name: "Fantasma", color: "#c0c0c0" },
-  { name: "Slime", color: "#a1cfff" },
-  { name: "Orc", color: "#a3be8c" },
-  { name: "Metamorfo", color: "#ab7967" },
-  { name: "Lobisomem", color: "#705749" },
-  { name: "Draconato", color: "#d65d0e" },
-  { name: "Oni", color: "#d74f4f" },
-  { name: "Corrompidos", color: "#a40000" }
+  new Race("Humano",       "#ffffff"),
+  new Race("Super humano", "#a3be8c"),
+  new Race("Anão",         "#d08770"),
+  new Race("Demi-humano",  "#b48ead"),
+  new Race("Elfo",         "#88c0d0"),
+  new Race("Druida",       "#8fbcbb"),
+  new Race("Animal",       "#ebcb8b"),
+  new Race("Cborg",        "#5e81ac"),
+  new Race("Anjo",         "#eceff4"),
+  new Race("Anjo caido",   "#bf616a"),
+  new Race("Demonio",      "#bf616a"),
+  new Race("Vampiro",      "#b48ead"),
+  new Race("Goul",         "#a3be8c"),
+  new Race("Gigante",      "#d08770"),
+  new Race("Golem",        "#7c6f64"),
+  new Race("Fantasma",     "#c0c0c0"),
+  new Race("Slime",        "#a1cfff"),
+  new Race("Orc",          "#a3be8c"),
+  new Race("Metamorfo",    "#ab7967"),
+  new Race("Lobisomem",    "#705749"),
+  new Race("Draconato",    "#d65d0e"),
+  new Race("Oni",          "#d74f4f"),
+  new Race("Corrompidos",  "#a40000")
 ];
+

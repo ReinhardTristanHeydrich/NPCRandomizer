@@ -33,7 +33,9 @@ getWeaponsForClass() {
 }
 
 const Classes = [
-  new Classe("Espadachim", "#d08770", getWeapons([["Espada", "Médio"]])),
+  new Classe("Espadachim", "#d08770", getWeapons([
+    ["Espada", "Médio"]
+  ])),
   
   new Classe("Juggernaut", "#a3be8c", getWeapons([
     ["Espada", "Grande"],
