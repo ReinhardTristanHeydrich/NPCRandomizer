@@ -1,4 +1,11 @@
     // Random
+    function rollD100(count) {
+  let total = 0;
+  for (let i = 0; i < count; i++) {
+    total += Math.floor(Math.random() * 100) + 1;
+  }
+  return total;
+}
     const rollD20 = () => Math.floor(Math.random() * 20) + 1;
     const getRace = () => Races[Math.floor(Math.random() * Races.length)];
     const getClass = () => Classes[Math.floor(Math.random() * Classes.length)];
@@ -57,11 +64,17 @@
     function padLabel(label, width = 14) {
       return label + ":" + " ".repeat(Math.max(0, width - label.length - 1));
     }
-    function padValue(value, roll) {
-      const rollColor = getRollColor(roll);
-      const valueColor = value === "Sim" || value === "Não" ? getYesNoColor(value) : "white";
-      return `<span class="value" style="color:${valueColor}">${value}</span> <span style="color:${rollColor}">(${roll})</span>`;
-    }
+    function padValue(value, roll) {  
+  // Se não tiver roll (valor numérico normal)
+  if (roll === undefined) {
+    return `<span class="value" style="color:white">${value}</span>`;
+  }
+  
+  // Código existente para valores com roll
+  const rollColor = getRollColor(roll);
+  const valueColor = value === "Sim" || value === "Não" ? getYesNoColor(value) : "white";
+  return `<span class="value" style="color:${valueColor}">${value}</span> <span style="color:${rollColor}">(${roll})</span>`;
+}
     function getYesNoColor(value) {
       return value === "Sim" ? "#88ff88" : "#ff8888";
     }
@@ -76,10 +89,14 @@
 
 
     
-    // Execution
 
 
     function generateNPC() {
+
+      const level = parseInt(document.getElementById("levelInput").value) || 1;
+      const diceCount = Math.ceil(level / 2);
+      const vida = rollD100(diceCount);
+      const mana = rollD100(diceCount);
 
       const rolls = []
       rolls["Multiclass"] = rollD20()
@@ -114,6 +131,9 @@ ${padLabel("Multiclasse",   15)}${padValue(isMulticlass ? "Sim" : "Não", rolls[
 ${padLabel("Prodígio",      15)}${padValue(isProdigy    ? "Sim" : "Não", rolls["Prodigy"]    )}
 ${padLabel("Híbrido",       15)}${padValue(isHybrid     ? "Sim" : "Não", rolls["Hybrid"]     )}
 ${padLabel("Classe Social", 0)} ${padValue(socialClass,                  rolls["Social"]     )}
+${padLabel("Vida",          15)}${padValue(vida)}
+${padLabel("Mana",          15)}${padValue(mana)}
+
 
 ${padLabel("Raça" + (races.length > 1 ? "s" : "")       )}${races.map(formatItem).join(" / ")}
 ${padLabel("Classe" + (classes.length > 1 ? "s" : "")   )}${classes.map(formatItem).join(" / ")}
