@@ -105,7 +105,7 @@
             w.name : `${w.name} (${w.size})`;
         }).join(" / ");
         
-        return `${padLabel(`Arma${weapons.length > 1 ? 's' : ''} (${className})`)}${weaponText}`;
+        return `${padLabel(`Arma${weapons.length > 1 ? 's' : ''} (${className})`, 20)}${weaponText}`;
       }).join("\n");
 
 
