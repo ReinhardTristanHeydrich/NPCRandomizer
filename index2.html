@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>NPC Randomizer</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .input-section {
+      margin: 20px 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    input, button {
+      padding: 8px 15px;
+      font-size: 16px;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    input[type="text"] {
+      width: 200px;
+    }
+
+    input[type="number"] {
+      width: 60px;
+    }
+
+    button {
+      cursor: pointer;
+      padding: 12px 25px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background: #555;
+    }
+
+    button:disabled {
+      background: #222;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .main-content {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .result {
+      white-space: pre;
+      font-size: 16px;
+      text-align: left;
+      max-width: 500px;
+      font-family: monospace;
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+
+    .attributes-panel {
+      background: #1a1a1a;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      max-width: 400px;
+    }
+
+    .attributes-grid {
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      margin: 15px 0;
+    }
+
+    .attribute-label {
+      text-align: left;
+      font-weight: bold;
+    }
+
+    .attribute-input {
+      width: 50px;
+      text-align: center;
+    }
+
+    .points-info {
+      margin: 15px 0;
+      padding: 10px;
+      background: #2a2a2a;
+      border-radius: 4px;
+    }
+
+    .points-available {
+      color: #88ff88;
+      font-weight: bold;
+    }
+
+    .points-total {
+      color: #8888ff;
+      font-weight: bold;
+    }
+
+    .green {
+      color: #88ff88;
+    }
+
+    .red {
+      color: #ff8888;
+    }
+
+    .value {
+      display: inline-block;
+      min-width: 80px;
+    }
+
+    .saved-characters {
+      margin-top: 30px;
+      text-align: left;
+    }
+
+    .character-item {
+      background: #1a1a1a;
+      margin: 10px 0;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .character-info {
+      flex: 1;
+    }
+
+    .character-name {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .character-details {
+      font-size: 14px;
+      color: #ccc;
+    }
+
+    .character-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .small-button {
+      padding: 5px 10px;
+      font-size: 12px;
+      background: #555;
+    }
+
+    .delete-button {
+      background: #aa3333;
+    }
+
+    .delete-button:hover {
+      background: #cc4444;
+    }
+
+    @media (max-width: 768px) {
+      .main-content {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .input-section {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#121212">
+  <link rel="icon" href="icons/icon-192.png">
+</head>
+
+<body>
+  <h1>NPC Randomizer</h1>
+  
+  <div class="input-section">
+    <div class="input-group">
+      <label for="characterName">Nome do Personagem:</label>
+      <input type="text" id="characterName" placeholder="Digite o nome...">
+    </div>
+    
+    <div class="input-group">
+      <label for="levelInput">Nível:</label>
+      <input type="number" id="levelInput" min="1" value="1">
+    </div>
+    
+    <button onclick="generateNPC()">Randomizar</button>
+    <button onclick="saveCharacter()" id="saveButton" disabled>Salvar Personagem</button>
+  </div>
+
+  <div class="main-content">
+    <div class="result" id="result"></div>
+    
+    <div class="attributes-panel">
+      <h3>Distribuição de Atributos</h3>
+      
+      <div class="points-info">
+        <div>Pontos Disponíveis: <span class="points-available" id="availablePoints">52</span></div>
+        <div>Total Gasto: <span class="points-total" id="totalSpent">0</span></div>
+      </div>
+      
+      <div class="attributes-grid">
+        <div class="attribute-label">Força</div>
+        <input type="number" class="attribute-input" id="str" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('str')">Reset</button>
+        
+        <div class="attribute-label">Destreza</div>
+        <input type="number" class="attribute-input" id="dex" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('dex')">Reset</button>
+        
+        <div class="attribute-label">Constituição</div>
+        <input type="number" class="attribute-input" id="con" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('con')">Reset</button>
+        
+        <div class="attribute-label">Inteligência</div>
+        <input type="number" class="attribute-input" id="int" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('int')">Reset</button>
+        
+        <div class="attribute-label">Sabedoria</div>
+        <input type="number" class="attribute-input" id="wis" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('wis')">Reset</button>
+        
+        <div class="attribute-label">Carisma</div>
+        <input type="number" class="attribute-input" id="cha" min="0" value="0" onchange="updatePoints()">
+        <button class="small-button" onclick="resetAttribute('cha')">Reset</button>
+      </div>
+      
+      <button onclick="resetAllAttributes()">Resetar Todos</button>
+      <button onclick="distributeRandomly()">Distribuir Aleatoriamente</button>
+    </div>
+  </div>
+
+  <div class="saved-characters">
+    <h3>Personagens Salvos</h3>
+    <div id="savedCharactersList"></div>
+    <button onclick="clearAllCharacters()" class="delete-button" style="margin-top: 10px;">Limpar Todos</button>
+  </div>
+
+  <!-- Parameters -->
+  <script src="param/Weapons.js"></script>
+  <script src="param/Classes.js"></script>
+  <script src="param/Races.js"></script>
+  <!-- Execution -->
+  <script src="main.js"></script>
+ 
+</body>
+
+</html>
