@@ -1,4 +1,4 @@
-    let currentCharacter = null;
+  let currentCharacter = null;
 
     function rollD100(count) {
       let total = 0;
@@ -58,7 +58,7 @@
         if (weapon) {
           weapons.push(weapon);
         } else {
-          weapons.push(new Weapon("Nenhuma", "#ffffff", "Sem tamanho"));
+          weapons.push({ name: "Nenhuma", color: "#ffffff", size: "Sem tamanho" });
         }
       }
 
@@ -94,15 +94,18 @@
     }
 
     function updatePoints() {
-      const level = parseInt(document.getElementById("levelInput").value) || 1;
-      const basePoints = 48 + (level - 1) * 4;
+      const level = parseInt(document.getElementById("levelInput").value);
+      const validLevel = isNaN(level) ? 0 : Math.max(0, level); // Garantir que o nível seja pelo menos 0
+      const basePoints = 48 + validLevel * 4; // Nível 0 = 48 pontos base
       
       const attributes = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
       let totalSpent = 0;
       
       attributes.forEach(attr => {
-        const value = parseInt(document.getElementById(attr).value) || 0;
-        totalSpent += value;
+        const value = parseInt(document.getElementById(attr).value);
+        if (!isNaN(value)) {
+          totalSpent += value;
+        }
       });
       
       const available = basePoints - totalSpent;
@@ -138,8 +141,9 @@
     }
 
     function distributeRandomly() {
-      const level = parseInt(document.getElementById("levelInput").value) || 1;
-      const basePoints = 48 + (level - 1) * 4;
+      const level = parseInt(document.getElementById("levelInput").value);
+      const validLevel = isNaN(level) ? 0 : Math.max(0, level);
+      const basePoints = 48 + validLevel * 4;
       const attributes = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
       
       // Reset all attributes
@@ -149,10 +153,12 @@
       
       let remainingPoints = basePoints;
       
-      // Distribute points randomly
+      // Distribute points randomly (allowing negative values)
       for (let i = 0; i < attributes.length - 1; i++) {
-        const maxForThisAttr = Math.min(remainingPoints, Math.floor(remainingPoints / (attributes.length - i)) + Math.floor(Math.random() * 10));
-        const points = Math.floor(Math.random() * (maxForThisAttr + 1));
+        // Allow negative distribution
+        const minValue = Math.max(-20, remainingPoints - 100); // Prevent extreme negative values
+        const maxValue = Math.min(remainingPoints + 20, remainingPoints + 20);
+        const points = Math.floor(Math.random() * (maxValue - minValue + 1)) + minValue;
         document.getElementById(attributes[i]).value = points;
         remainingPoints -= points;
       }
@@ -172,8 +178,9 @@
     }
 
     function generateNPC() {
-      const level = parseInt(document.getElementById("levelInput").value) || 1;
-      const diceCount = Math.ceil(level / 2);
+      const level = parseInt(document.getElementById("levelInput").value);
+      const validLevel = isNaN(level) ? 0 : Math.max(0, level);
+      const diceCount = Math.max(1, Math.ceil((validLevel + 1) / 2)); // Nível 0 ainda rola 1 dado
       const vida = rollD100(diceCount);
       const mana = rollD100(diceCount);
 
@@ -214,8 +221,6 @@
         cha: parseInt(document.getElementById('cha').value) || 0
       };
 
-      console.log('Atributos capturados na geração:', attributes);
-
       const attributeLines = `
 ${padLabel("Força", 15)}${padValue(attributes.str)}
 ${padLabel("Destreza", 15)}${padValue(attributes.dex)}
@@ -242,7 +247,7 @@ ${weaponLines}
 
       // Store current character data
       currentCharacter = {
-        level,
+        level: validLevel,
         rolls,
         isMulticlass,
         isProdigy,
@@ -260,7 +265,7 @@ ${weaponLines}
       updateSaveButton();
     }
 
-    // Character saving system
+    // Character saving system (mantido o localStorage)
     function saveCharacter() {
       if (!currentCharacter) {
         alert('Gere um personagem primeiro!');
@@ -273,7 +278,6 @@ ${weaponLines}
         return;
       }
 
-      // Capturar os atributos atuais dos inputs no momento do salvamento
       const currentAttributes = {
         str: parseInt(document.getElementById('str').value) || 0,
         dex: parseInt(document.getElementById('dex').value) || 0,
@@ -288,12 +292,9 @@ ${weaponLines}
         name,
         timestamp: new Date().toLocaleString('pt-BR'),
         ...currentCharacter,
-        attributes: currentAttributes // Sobrescrever com os valores atuais
+        attributes: currentAttributes
       };
 
-      console.log('Salvando personagem com atributos:', currentAttributes);
-
-      // Get existing characters
       let savedCharacters = [];
       try {
         const stored = localStorage.getItem('npcCharacters');
@@ -304,10 +305,8 @@ ${weaponLines}
         console.error('Erro ao carregar personagens salvos:', e);
       }
 
-      // Add new character
       savedCharacters.push(characterData);
 
-      // Save back to localStorage
       try {
         localStorage.setItem('npcCharacters', JSON.stringify(savedCharacters));
         alert('Personagem salvo com sucesso!');
@@ -333,29 +332,22 @@ ${weaponLines}
           return;
         }
 
-        // Set level
         document.getElementById('levelInput').value = character.level;
 
-        // Set attributes
         const attributes = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-        console.log('Carregando atributos do personagem:', character.attributes);
         attributes.forEach(attr => {
           const value = character.attributes[attr] || 0;
-          console.log(`Definindo ${attr} = ${value}`);
           document.getElementById(attr).value = value;
         });
         updatePoints();
 
-        // Set character name
         document.getElementById('characterName').value = character.name;
 
-        // Set current character data
         currentCharacter = { ...character };
         delete currentCharacter.id;
         delete currentCharacter.name;
         delete currentCharacter.timestamp;
 
-        // Display the character
         displayLoadedCharacter(character);
         updateSaveButton();
 
@@ -379,7 +371,6 @@ ${weaponLines}
         return `${padLabel(`Arma${weapons.length > 1 ? 's' : ''} (${className})`, 20)}${weaponText}`;
       }).join("\n");
 
-      // Garantir que os atributos existam, usando valores padrão se necessário
       const attrs = character.attributes || {str: 0, dex: 0, con: 0, int: 0, wis: 0, cha: 0};
       
       const attributeLines = `
@@ -462,24 +453,22 @@ ${weaponLines}
           return;
         }
 
-        // Sort by timestamp (newest first)
         savedCharacters.sort((a, b) => b.id - a.id);
 
         const charactersHtml = savedCharacters.map(character => {
           const raceNames = character.races.map(r => r.name).join(", ");
           const classNames = character.classes.map(c => c.name).join(", ");
           
-          // Mostrar os atributos na preview (apenas os que têm valor > 0 para economizar espaço)
           const attrs = character.attributes || {};
-          const nonZeroAttrs = [];
-          if (attrs.str > 0) nonZeroAttrs.push(`FOR: ${attrs.str}`);
-          if (attrs.dex > 0) nonZeroAttrs.push(`DES: ${attrs.dex}`);
-          if (attrs.con > 0) nonZeroAttrs.push(`CON: ${attrs.con}`);
-          if (attrs.int > 0) nonZeroAttrs.push(`INT: ${attrs.int}`);
-          if (attrs.wis > 0) nonZeroAttrs.push(`SAB: ${attrs.wis}`);
-          if (attrs.cha > 0) nonZeroAttrs.push(`CAR: ${attrs.cha}`);
+          const attributesList = [];
+          if (attrs.str !== 0) attributesList.push(`FOR: ${attrs.str}`);
+          if (attrs.dex !== 0) attributesList.push(`DES: ${attrs.dex}`);
+          if (attrs.con !== 0) attributesList.push(`CON: ${attrs.con}`);
+          if (attrs.int !== 0) attributesList.push(`INT: ${attrs.int}`);
+          if (attrs.wis !== 0) attributesList.push(`SAB: ${attrs.wis}`);
+          if (attrs.cha !== 0) attributesList.push(`CAR: ${attrs.cha}`);
           
-          const attributesText = nonZeroAttrs.length > 0 ? nonZeroAttrs.join(", ") : "Atributos não distribuídos";
+          const attributesText = attributesList.length > 0 ? attributesList.join(", ") : "Todos os atributos zerados";
           
           return `
             <div class="character-item">
@@ -509,13 +498,9 @@ ${weaponLines}
 
     // Initialize the application
     document.addEventListener('DOMContentLoaded', function() {
-      // Set up event listeners
       document.getElementById('levelInput').addEventListener('change', updatePoints);
       document.getElementById('characterName').addEventListener('input', updateSaveButton);
       
-      // Initialize points display
       updatePoints();
-      
-      // Display saved characters
       displaySavedCharacters();
     });

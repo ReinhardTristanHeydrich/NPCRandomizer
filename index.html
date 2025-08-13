@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NPC Randomizer</title>
   <style>
     body {
@@ -10,7 +11,7 @@
       color: white;
       font-family: sans-serif;
       text-align: center;
-      padding: 30px;
+      padding: 20px;
       max-width: 1200px;
       margin: 0 auto;
     }
@@ -29,40 +30,57 @@
       flex-direction: column;
       align-items: center;
       gap: 5px;
+      min-width: 120px;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      white-space: nowrap;
     }
 
     input, button {
-      padding: 8px 15px;
+      padding: 12px 15px;
       font-size: 16px;
       background: #333;
       color: white;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
+      touch-action: manipulation;
     }
 
     input[type="text"] {
-      width: 200px;
+      width: 180px;
+      min-width: 150px;
     }
 
     input[type="number"] {
-      width: 60px;
+      width: 80px;
+      text-align: center;
     }
 
     button {
       cursor: pointer;
-      padding: 12px 25px;
+      padding: 12px 20px;
       font-size: 16px;
-      transition: background-color 0.3s;
+      font-weight: 500;
+      transition: all 0.2s;
+      min-height: 48px;
     }
 
     button:hover {
       background: #555;
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     button:disabled {
       background: #222;
       cursor: not-allowed;
       opacity: 0.5;
+      transform: none;
     }
 
     .main-content {
@@ -83,6 +101,7 @@
       padding: 20px;
       border-radius: 8px;
       border: 1px solid #333;
+      overflow-x: auto;
     }
 
     .attributes-panel {
@@ -91,12 +110,13 @@
       border-radius: 8px;
       border: 1px solid #333;
       max-width: 400px;
+      width: 100%;
     }
 
     .attributes-grid {
       display: grid;
       grid-template-columns: 1fr auto auto;
-      gap: 10px;
+      gap: 12px;
       align-items: center;
       margin: 15px 0;
     }
@@ -104,18 +124,22 @@
     .attribute-label {
       text-align: left;
       font-weight: bold;
+      font-size: 14px;
     }
 
     .attribute-input {
-      width: 50px;
+      width: 60px;
       text-align: center;
+      padding: 8px;
+      font-size: 14px;
     }
 
     .points-info {
       margin: 15px 0;
-      padding: 10px;
+      padding: 15px;
       background: #2a2a2a;
-      border-radius: 4px;
+      border-radius: 6px;
+      font-size: 14px;
     }
 
     .points-available {
@@ -154,33 +178,41 @@
       border: 1px solid #333;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
+      gap: 15px;
     }
 
     .character-info {
       flex: 1;
+      min-width: 0;
     }
 
     .character-name {
       font-weight: bold;
       font-size: 18px;
-      margin-bottom: 5px;
+      margin-bottom: 8px;
+      word-wrap: break-word;
     }
 
     .character-details {
       font-size: 14px;
       color: #ccc;
+      line-height: 1.4;
     }
 
     .character-actions {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .small-button {
-      padding: 5px 10px;
+      padding: 8px 12px;
       font-size: 12px;
       background: #555;
+      min-height: 36px;
+      white-space: nowrap;
     }
 
     .delete-button {
@@ -191,15 +223,168 @@
       background: #cc4444;
     }
 
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 15px;
+    }
+
+    .button-row button {
+      flex: 1;
+      min-width: 140px;
+    }
+
+    /* Mobile optimizations */
     @media (max-width: 768px) {
-      .main-content {
-        flex-direction: column;
-        align-items: center;
+      body {
+        padding: 10px;
       }
-      
+
+      h1 {
+        font-size: 24px;
+        margin: 10px 0 20px 0;
+      }
+
       .input-section {
         flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+      }
+
+      .input-group {
+        min-width: auto;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+
+      .input-group label {
+        font-size: 16px;
+        margin-bottom: 5px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        max-width: 280px;
+        padding: 15px;
+        font-size: 16px;
+      }
+
+      input[type="number"] {
+        width: 100px;
+        padding: 15px;
+        font-size: 16px;
+      }
+
+      button {
+        padding: 15px 20px;
+        font-size: 16px;
+        min-height: 50px;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+      }
+
+      .main-content {
+        flex-direction: column;
+        gap: 20px;
+        align-items: center;
+      }
+
+      .result {
+        width: 100%;
+        max-width: none;
+        font-size: 14px;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .attributes-panel {
+        width: 100%;
+        max-width: none;
+        padding: 15px;
+        box-sizing: border-box;
+      }
+
+      .attributes-grid {
+        gap: 15px;
+        grid-template-columns: 1fr auto auto;
+      }
+
+      .attribute-label {
+        font-size: 16px;
+      }
+
+      .attribute-input {
+        width: 70px;
+        padding: 12px 8px;
+        font-size: 16px;
+      }
+
+      .small-button {
+        padding: 10px 12px;
+        font-size: 14px;
+        min-height: 42px;
+      }
+
+      .points-info {
+        padding: 12px;
+        font-size: 16px;
+      }
+
+      .character-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+
+      .character-actions {
+        flex-direction: row;
+        justify-content: stretch;
+      }
+
+      .character-actions button {
+        flex: 1;
+        max-width: none;
+        margin: 0;
+      }
+
+      .button-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .button-row button {
+        width: 100%;
+        max-width: none;
+        min-width: auto;
+      }
+
+      .saved-characters h3 {
+        text-align: center;
+      }
+    }
+
+    /* Extra small screens */
+    @media (max-width: 480px) {
+      .attributes-grid {
+        grid-template-columns: 1fr;
         gap: 10px;
+        text-align: center;
+      }
+
+      .attribute-label {
+        margin-bottom: 5px;
+      }
+
+      .character-details {
+        font-size: 13px;
+      }
+
+      .result {
+        font-size: 12px;
       }
     }
   </style>
@@ -220,7 +405,7 @@
     
     <div class="input-group">
       <label for="levelInput">Nível:</label>
-      <input type="number" id="levelInput" min="1" value="1">
+      <input type="number" id="levelInput" min="0" value="0">
     </div>
     
     <button onclick="generateNPC()">Randomizar</button>
@@ -234,54 +419,55 @@
       <h3>Distribuição de Atributos</h3>
       
       <div class="points-info">
-        <div>Pontos Disponíveis: <span class="points-available" id="availablePoints">52</span></div>
+        <div>Pontos Disponíveis: <span class="points-available" id="availablePoints">48</span></div>
         <div>Total Gasto: <span class="points-total" id="totalSpent">0</span></div>
       </div>
       
       <div class="attributes-grid">
         <div class="attribute-label">Força</div>
-        <input type="number" class="attribute-input" id="str" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="str" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('str')">Reset</button>
         
         <div class="attribute-label">Destreza</div>
-        <input type="number" class="attribute-input" id="dex" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="dex" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('dex')">Reset</button>
         
         <div class="attribute-label">Constituição</div>
-        <input type="number" class="attribute-input" id="con" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="con" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('con')">Reset</button>
         
         <div class="attribute-label">Inteligência</div>
-        <input type="number" class="attribute-input" id="int" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="int" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('int')">Reset</button>
         
         <div class="attribute-label">Sabedoria</div>
-        <input type="number" class="attribute-input" id="wis" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="wis" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('wis')">Reset</button>
         
         <div class="attribute-label">Carisma</div>
-        <input type="number" class="attribute-input" id="cha" min="0" value="0" onchange="updatePoints()">
+        <input type="number" class="attribute-input" id="cha" value="0" onchange="updatePoints()">
         <button class="small-button" onclick="resetAttribute('cha')">Reset</button>
       </div>
       
-      <button onclick="resetAllAttributes()">Resetar Todos</button>
-      <button onclick="distributeRandomly()">Distribuir Aleatoriamente</button>
+      <div class="button-row">
+        <button onclick="resetAllAttributes()">Resetar Todos</button>
+        <button onclick="distributeRandomly()">Distribuir Aleatoriamente</button>
+      </div>
     </div>
   </div>
 
   <div class="saved-characters">
     <h3>Personagens Salvos</h3>
     <div id="savedCharactersList"></div>
-    <button onclick="clearAllCharacters()" class="delete-button" style="margin-top: 10px;">Limpar Todos</button>
+    <button onclick="clearAllCharacters()" class="delete-button" style="margin-top: 15px; width: 100%; max-width: 300px;">Limpar Todos</button>
   </div>
 
-  <!-- Parameters -->
+    <!-- Parameters -->
   <script src="param/Weapons.js"></script>
   <script src="param/Classes.js"></script>
   <script src="param/Races.js"></script>
   <!-- Execution -->
   <script src="main.js"></script>
- 
-</body>
 
+</body>
 </html>
